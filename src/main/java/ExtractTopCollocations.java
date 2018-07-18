@@ -8,7 +8,6 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Partitioner;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
@@ -16,7 +15,7 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import java.io.IOException;
 
 public class ExtractTopCollocations {
-        public static class MapperClass extends Mapper<LongWritable, Text, DecadeCount, Text> {
+        public static class TopMapperClass extends Mapper<LongWritable, Text, DecadeCount, Text> {
 
         @Override
         public void map(LongWritable key, Text value, Context context) throws IOException,  InterruptedException {
@@ -27,11 +26,11 @@ public class ExtractTopCollocations {
             String count = fields[2];
             String[] ngram_words = ngram.split(" ");
             if (ngram_words.length != 2) { return; }
-            context.write(new DecadeCount(decade,Integer.valueOf(count)), new Text(ngram));
+            context.write(new DecadeCount(decade,new IntWritable(Integer.valueOf(count))), new Text(ngram));
             }
         }
 
-    public static class ReducerClass extends Reducer<DecadeCount,Text,DecadeNgram,IntWritable> {
+    public static class TopReducerClass extends Reducer<DecadeCount,Text,DecadeNgram,IntWritable> {
         int countInMem;
         String decadeInMem;
 
@@ -58,9 +57,9 @@ public class ExtractTopCollocations {
         }
     }
 
-    public static class PartitionerClass extends Partitioner<DecadeCount, Text> {
+    public static class TopPartitionerClass extends Partitioner<DecadeNgram, Text> {
         @Override
-        public int getPartition(DecadeCount key, Text value, int numPartitions) {
+        public int getPartition(DecadeNgram key, Text value, int numPartitions) {
             return key.hashCode() % numPartitions;
         }
     }
@@ -78,10 +77,10 @@ public class ExtractTopCollocations {
         Job job = new Job(conf, "extractTopCollocations");
         job.setJarByClass(ExtractTopCollocations.class);
 
-        job.setMapperClass(MapperClass.class);
-        job.setPartitionerClass(PartitionerClass.class);
-        job.setCombinerClass(ReducerClass.class);
-        job.setReducerClass(ReducerClass.class);
+        job.setMapperClass(TopMapperClass.class);
+        job.setPartitionerClass(TopPartitionerClass.class);
+        job.setCombinerClass(TopReducerClass.class);
+        job.setReducerClass(TopReducerClass.class);
 
         job.setMapOutputKeyClass(DecadeCount.class);
         job.setMapOutputValueClass(Text.class);
@@ -89,7 +88,7 @@ public class ExtractTopCollocations {
         job.setOutputKeyClass(DecadeNgram.class);
         job.setOutputValueClass(IntWritable.class);
 
-        job.setInputFormatClass(TextInputFormat.class);
+        job.setInputFormatClass(TextInputFormat.class); //TODO change to SequenceFileInputFormat
         job.setOutputFormatClass(TextOutputFormat.class);
 
         Path op = new Path(output);

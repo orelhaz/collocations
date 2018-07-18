@@ -18,8 +18,8 @@ class DecadeCount implements WritableComparable<DecadeCount> {
         set(new Text(), new IntWritable());
     }
 
-    DecadeCount(String decade, int count) {
-        set(new Text(decade), new IntWritable(count));
+    DecadeCount(String decade, IntWritable count) {
+        set(new Text(decade), count);
     }
 
     public Text getDecade() {
