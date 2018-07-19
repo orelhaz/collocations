@@ -15,52 +15,56 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import java.io.IOException;
 
 public class ExtractTopCollocations {
-        public static class TopMapperClass extends Mapper<LongWritable, Text, DecadeCount, Text> {
+    public static class TopMapperClass extends Mapper<LongWritable, Text, DecadeCount, Text> {
 
         @Override
-        public void map(LongWritable key, Text value, Context context) throws IOException,  InterruptedException {
+        public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
             String[] fields = value.toString().split("\t");
-            if (fields.length < 3) { return; }
+
+            if (fields.length < 3)
+                return;
+
             String decade = fields[0];
             String ngram = fields[1];
             String count = fields[2];
-            String[] ngram_words = ngram.split(" ");
-            if (ngram_words.length != 2) { return; }
-            context.write(new DecadeCount(decade,new IntWritable(Integer.valueOf(count))), new Text(ngram));
-            }
-        }
 
-    public static class TopReducerClass extends Reducer<DecadeCount,Text,DecadeNgram,IntWritable> {
+            context.write(new DecadeCount(decade, new IntWritable(Integer.valueOf(count))), new Text(ngram));
+        }
+    }
+
+    public static class TopReducerClass extends Reducer<DecadeCount, Text, DecadeNgram, IntWritable> {
         int countInMem;
-        String decadeInMem;
+        String decadeInMem = null;
 
         @Override
         public void reduce(DecadeCount key, Iterable<Text> values, Context context) throws IOException,  InterruptedException {
 
-            int top = Integer.parseInt(context.getConfiguration().get("top","100"));
+            int top = Integer.parseInt(context.getConfiguration().get("top", "100"));
+
             Text decade = key.getDecade();
             IntWritable count = key.getCount();
+
             if (decadeInMem == null || !decade.toString().equals(decadeInMem)) {
                 countInMem = 0;
                 decadeInMem = decade.toString();
             }
 
             for (Text ngram : values) {
-                String[] ngram_words = ngram.toString().split(" ");
-             //   if (ngram_words.length != 2) { continue; }
-                if (countInMem < 100)
-                {
-                    countInMem++;
-                    context.write(new DecadeNgram(decade.toString(),ngram.toString()), count);
-                }
+                if (countInMem >= top)
+                    return;
+
+                countInMem++;
+                context.write(new DecadeNgram(decade.toString(),ngram.toString()), count);
+
             }
         }
     }
 
-    public static class TopPartitionerClass extends Partitioner<DecadeNgram, Text> {
+
+    public static class TopPartitionerClass extends Partitioner<DecadeCount, Text> {
         @Override
-        public int getPartition(DecadeNgram key, Text value, int numPartitions) {
-            return key.hashCode() % numPartitions;
+        public int getPartition(DecadeCount key, Text value, int numPartitions) {
+            return key.getDecade().hashCode() % numPartitions;
         }
     }
 
@@ -74,12 +78,13 @@ public class ExtractTopCollocations {
         Configuration conf = new Configuration();
         conf.set("top", String.valueOf(100));
 
-        Job job = new Job(conf, "extractTopCollocations");
+        Job job = Job.getInstance(conf, "extractTopCollocations");
         job.setJarByClass(ExtractTopCollocations.class);
 
         job.setMapperClass(TopMapperClass.class);
         job.setPartitionerClass(TopPartitionerClass.class);
-        job.setCombinerClass(TopReducerClass.class);
+        job.setSortComparatorClass(DecadeCountComparator.class);
+        //job.setCombinerClass(TopReducerClass.class);
         job.setReducerClass(TopReducerClass.class);
 
         job.setMapOutputKeyClass(DecadeCount.class);
@@ -88,7 +93,7 @@ public class ExtractTopCollocations {
         job.setOutputKeyClass(DecadeNgram.class);
         job.setOutputValueClass(IntWritable.class);
 
-        job.setInputFormatClass(TextInputFormat.class); //TODO change to SequenceFileInputFormat
+        job.setInputFormatClass(TextInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
 
         Path op = new Path(output);
