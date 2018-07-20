@@ -1,26 +1,26 @@
-ab 5
-ac 6
+ab 1992 5
+ac 1996 6
 
-//1
+//1 - split word and total
 after mapper:
-1990 a <ab> 5
-1990 b <ab> 5
-1990 a <ac> 6
-1990 c <ac> 6
+1990 a 	<ab> 5
+1990 a 	<ac> 6
+1990 b 	<ab> 5
+1990 c 	<ac> 6
 
 output: (decade w pair pair_count)
-1990 a <ab> 5
-1990 a <ac> 6
-1990 a total 11
-1990 b <ab> 5
-1990 b total 5
-1990 c <ac> 6
-1990 c total 6
-1990 total 11
+1990 a 	<ab> 5
+1990 a 	<ac> 6
+1990 a 	total 11
+1990 b 	<ab> 5
+1990 b 	total 5
+1990 c 	<ac> 6
+1990 c 	total 6
+1990 	total 22
 
 //2
 after mapper:
-1990 total 11
+1990 total 22
 a 1990 total 11
 a 1990 <ab> 5
 a 1990 <ac> 6

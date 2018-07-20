@@ -13,7 +13,7 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
 public class ExtractCollocationsInDecade {
-        public static class DecadeMapperClass extends Mapper<LongWritable, Text, DecadeNgram, IntWritable> {
+        public static class DecadeMapperClass extends Mapper<LongWritable, Text, DecadeText, IntWritable> {
 
         @Override
         public void map(LongWritable key, Text value, Context context) throws IOException,  InterruptedException {
@@ -25,13 +25,13 @@ public class ExtractCollocationsInDecade {
             String[] ngram_words = ngram.split(" ");
             if (ngram_words.length != 2) { return; }
             String decade = year.substring(0,3) + "0";
-            context.write(new DecadeNgram(decade ,ngram), new IntWritable(Integer.valueOf(count)));
+            context.write(new DecadeText(decade ,ngram), new IntWritable(Integer.valueOf(count)));
             }
         }
 
-    public static class DecadeReducerClass extends Reducer<DecadeNgram,IntWritable,DecadeNgram,IntWritable> {
+    public static class DecadeReducerClass extends Reducer<DecadeText,IntWritable,DecadeText,IntWritable> {
         @Override
-        public void reduce(DecadeNgram key, Iterable<IntWritable> values, Context context) throws IOException,  InterruptedException {
+        public void reduce(DecadeText key, Iterable<IntWritable> values, Context context) throws IOException,  InterruptedException {
             int sum = 0;
             for (IntWritable value : values) {
                 sum += value.get();
@@ -40,9 +40,9 @@ public class ExtractCollocationsInDecade {
         }
     }
 
-    public static class DecadePartitionerClass extends Partitioner<DecadeNgram, IntWritable> {
+    public static class DecadePartitionerClass extends Partitioner<DecadeText, IntWritable> {
         @Override
-        public int getPartition(DecadeNgram key, IntWritable value, int numPartitions) {
+        public int getPartition(DecadeText key, IntWritable value, int numPartitions) {
             return key.hashCode() % numPartitions;
         }
     }
@@ -63,9 +63,9 @@ public class ExtractCollocationsInDecade {
         job.setPartitionerClass(DecadePartitionerClass.class);
         job.setCombinerClass(DecadeReducerClass.class);
         job.setReducerClass(DecadeReducerClass.class);
-        job.setMapOutputKeyClass(DecadeNgram.class);
+        job.setMapOutputKeyClass(DecadeText.class);
         job.setMapOutputValueClass(IntWritable.class);
-        job.setOutputKeyClass(DecadeNgram.class);
+        job.setOutputKeyClass(DecadeText.class);
         job.setOutputValueClass(IntWritable.class);
         job.setInputFormatClass(TextInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);

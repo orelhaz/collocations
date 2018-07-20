@@ -8,17 +8,17 @@ import java.io.IOException;
 /**
  * Created by Orel on 18/07/2018.
  */
-class DecadeNgram implements WritableComparable<DecadeNgram> {
+class DecadeText implements WritableComparable<DecadeText> {
 
     Text decade;
-    Text ngram;
+    Text text;
 
-    public DecadeNgram() {
+    public DecadeText() {
         set(new Text(), new Text());
     }
 
-    DecadeNgram(String decade, String ngram) {
-        set(new Text(decade), new Text(ngram));
+    DecadeText(String decade, String word) {
+        set(new Text(decade), new Text(word));
     }
 
     public Text getDecade() {
@@ -26,25 +26,25 @@ class DecadeNgram implements WritableComparable<DecadeNgram> {
     }
 
 
-    public Text getNgram() {
-        return ngram;
+    public Text getText() {
+        return text;
     }
 
-    public void set(Text decade, Text ngram) {
+    public void set(Text decade, Text word) {
         this.decade = decade;
-        this.ngram = ngram;
+        this.text = word;
     }
 
     @Override
     public void readFields(DataInput in) throws IOException {
         decade.readFields(in);
-        ngram.readFields(in);
+        text.readFields(in);
     }
 
     @Override
     public void write(DataOutput out) throws IOException {
         decade.write(out);
-        ngram.write(out);
+        text.write(out);
     }
 
     @Override
@@ -53,19 +53,14 @@ class DecadeNgram implements WritableComparable<DecadeNgram> {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
-    }
-
-    @Override
     public String toString() {
-        return decade.toString() + '\t' + ngram.toString();
+        return decade.toString() + '\t' + text.toString();
     }
 
     @Override
-    public int compareTo(DecadeNgram other) {
+    public int compareTo(DecadeText other) {
         int result = decade.compareTo(other.decade);
         if (result != 0) return result;
-        return ngram.compareTo(other.ngram);
+        return text.compareTo(other.text);
     }
 }

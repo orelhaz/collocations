@@ -32,7 +32,7 @@ public class ExtractTopCollocations {
         }
     }
 
-    public static class TopReducerClass extends Reducer<DecadeCount, Text, DecadeNgram, IntWritable> {
+    public static class TopReducerClass extends Reducer<DecadeCount, Text, DecadeText, IntWritable> {
         int countInMem;
         String decadeInMem = null;
 
@@ -54,7 +54,7 @@ public class ExtractTopCollocations {
                     return;
 
                 countInMem++;
-                context.write(new DecadeNgram(decade.toString(),ngram.toString()), count);
+                context.write(new DecadeText(decade.toString(),ngram.toString()), count);
 
             }
         }
@@ -64,7 +64,7 @@ public class ExtractTopCollocations {
     public static class TopPartitionerClass extends Partitioner<DecadeCount, Text> {
         @Override
         public int getPartition(DecadeCount key, Text value, int numPartitions) {
-            return key.getDecade().hashCode() % numPartitions;
+            return key.hashCode() % numPartitions;
         }
     }
 
@@ -90,7 +90,7 @@ public class ExtractTopCollocations {
         job.setMapOutputKeyClass(DecadeCount.class);
         job.setMapOutputValueClass(Text.class);
 
-        job.setOutputKeyClass(DecadeNgram.class);
+        job.setOutputKeyClass(DecadeText.class);
         job.setOutputValueClass(IntWritable.class);
 
         job.setInputFormatClass(TextInputFormat.class);
