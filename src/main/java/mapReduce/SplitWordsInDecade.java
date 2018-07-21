@@ -1,3 +1,5 @@
+package mapReduce;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
@@ -10,11 +12,12 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+import writeableClasses.DecadeText;
 
 import java.io.IOException;
 
 public class SplitWordsInDecade {
-    public static class SplitWordsMapperClass extends Mapper<LongWritable, Text, DecadeText, Text> {
+    public static class MapperClass extends Mapper<LongWritable, Text, DecadeText, Text> {
 
         @Override
         public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
@@ -35,7 +38,7 @@ public class SplitWordsInDecade {
         }
     }
 
-    public static class SplitWordsReducerClass extends Reducer<DecadeText, Text, Text, Text> {
+    public static class ReducerClass extends Reducer<DecadeText, Text, Text, Text> {
         String wordInMem = null;
         String decadeInMem = null;
         int wordSum=0;
@@ -72,11 +75,11 @@ public class SplitWordsInDecade {
         }
 
         private void writeTotalWord(Context context) throws IOException, InterruptedException {
-            context.write(new Text(decadeInMem + "\t" + wordInMem), new Text(String.valueOf(wordSum)));
+            context.write(new Text(String.join("\t",decadeInMem, wordInMem, " ")), new Text(String.valueOf(wordSum)));
         }
 
         private void writeTotalDecade(Context context) throws IOException, InterruptedException {
-            context.write(new Text(decadeInMem), new Text(String.valueOf(decadeSum)));
+            context.write(new Text(String.join("\t",decadeInMem, " ", " ")), new Text(String.valueOf(decadeSum)));
         }
 
         @Override
@@ -87,7 +90,7 @@ public class SplitWordsInDecade {
         }
     }
 
-    public static class SplitWordsPartitionerClass extends Partitioner<DecadeText, Text> {
+    public static class PartitionerClass extends Partitioner<DecadeText, Text> {
         @Override
         public int getPartition(DecadeText key, Text value, int numPartitions) {
             return key.hashCode() % numPartitions;
@@ -103,13 +106,13 @@ public class SplitWordsInDecade {
 
         Configuration conf = new Configuration();
 
-        Job job = new Job(conf, "SplitWordsInDecade");
+        Job job = new Job(conf, "mapReduce.SplitWordsInDecade");
         job.setJarByClass(SplitWordsInDecade.class);
 
-        job.setMapperClass(SplitWordsMapperClass.class);
-        job.setPartitionerClass(SplitWordsPartitionerClass.class);
-       // job.setCombinerClass(SplitWordsReducerClass.class);
-        job.setReducerClass(SplitWordsReducerClass.class);
+        job.setMapperClass(MapperClass.class);
+        job.setPartitionerClass(PartitionerClass.class);
+       // job.setCombinerClass(ReducerClass.class);
+        job.setReducerClass(ReducerClass.class);
         job.setMapOutputKeyClass(DecadeText.class);
         job.setMapOutputValueClass(Text.class);
         job.setOutputKeyClass(Text.class);

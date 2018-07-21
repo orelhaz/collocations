@@ -1,3 +1,5 @@
+package mapReduce;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
@@ -11,11 +13,14 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+import writeableClasses.DecadeCount;
+import writeableClasses.DecadeCountComparator;
+import writeableClasses.DecadeText;
 
 import java.io.IOException;
 
 public class ExtractTopCollocations {
-    public static class TopMapperClass extends Mapper<LongWritable, Text, DecadeCount, Text> {
+    public static class MapperClass extends Mapper<LongWritable, Text, DecadeCount, Text> {
 
         @Override
         public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
@@ -32,7 +37,7 @@ public class ExtractTopCollocations {
         }
     }
 
-    public static class TopReducerClass extends Reducer<DecadeCount, Text, DecadeText, IntWritable> {
+    public static class ReducerClass extends Reducer<DecadeCount, Text, DecadeText, IntWritable> {
         int countInMem;
         String decadeInMem = null;
 
@@ -61,7 +66,7 @@ public class ExtractTopCollocations {
     }
 
 
-    public static class TopPartitionerClass extends Partitioner<DecadeCount, Text> {
+    public static class PartitionerClass extends Partitioner<DecadeCount, Text> {
         @Override
         public int getPartition(DecadeCount key, Text value, int numPartitions) {
             return key.hashCode() % numPartitions;
@@ -81,11 +86,11 @@ public class ExtractTopCollocations {
         Job job = Job.getInstance(conf, "extractTopCollocations");
         job.setJarByClass(ExtractTopCollocations.class);
 
-        job.setMapperClass(TopMapperClass.class);
-        job.setPartitionerClass(TopPartitionerClass.class);
+        job.setMapperClass(MapperClass.class);
+        job.setPartitionerClass(PartitionerClass.class);
         job.setSortComparatorClass(DecadeCountComparator.class);
-        //job.setCombinerClass(TopReducerClass.class);
-        job.setReducerClass(TopReducerClass.class);
+        //job.setCombinerClass(ReducerClass.class);
+        job.setReducerClass(ReducerClass.class);
 
         job.setMapOutputKeyClass(DecadeCount.class);
         job.setMapOutputValueClass(Text.class);

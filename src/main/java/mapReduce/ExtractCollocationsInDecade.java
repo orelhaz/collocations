@@ -1,3 +1,4 @@
+package mapReduce;
 
 import java.io.IOException;
 
@@ -11,9 +12,10 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+import writeableClasses.DecadeText;
 
 public class ExtractCollocationsInDecade {
-        public static class DecadeMapperClass extends Mapper<LongWritable, Text, DecadeText, IntWritable> {
+        public static class MapperClass extends Mapper<LongWritable, Text, DecadeText, IntWritable> {
 
         @Override
         public void map(LongWritable key, Text value, Context context) throws IOException,  InterruptedException {
@@ -29,7 +31,7 @@ public class ExtractCollocationsInDecade {
             }
         }
 
-    public static class DecadeReducerClass extends Reducer<DecadeText,IntWritable,DecadeText,IntWritable> {
+    public static class ReducerClass extends Reducer<DecadeText,IntWritable,DecadeText,IntWritable> {
         @Override
         public void reduce(DecadeText key, Iterable<IntWritable> values, Context context) throws IOException,  InterruptedException {
             int sum = 0;
@@ -40,7 +42,7 @@ public class ExtractCollocationsInDecade {
         }
     }
 
-    public static class DecadePartitionerClass extends Partitioner<DecadeText, IntWritable> {
+    public static class PartitionerClass extends Partitioner<DecadeText, IntWritable> {
         @Override
         public int getPartition(DecadeText key, IntWritable value, int numPartitions) {
             return key.hashCode() % numPartitions;
@@ -59,10 +61,10 @@ public class ExtractCollocationsInDecade {
         Job job = new Job(conf, "extractCollocationsInDecade");
         job.setJarByClass(ExtractCollocationsInDecade.class);
 
-        job.setMapperClass(DecadeMapperClass.class);
-        job.setPartitionerClass(DecadePartitionerClass.class);
-        job.setCombinerClass(DecadeReducerClass.class);
-        job.setReducerClass(DecadeReducerClass.class);
+        job.setMapperClass(MapperClass.class);
+        job.setPartitionerClass(PartitionerClass.class);
+        job.setCombinerClass(ReducerClass.class);
+        job.setReducerClass(ReducerClass.class);
         job.setMapOutputKeyClass(DecadeText.class);
         job.setMapOutputValueClass(IntWritable.class);
         job.setOutputKeyClass(DecadeText.class);

@@ -1,18 +1,15 @@
+package writeableClasses;
+
 import org.apache.hadoop.io.WritableComparator;
 
 
-import java.io.*;
-import org.apache.hadoop.io.FloatWritable;
 import org.apache.hadoop.io.WritableComparable;
-import org.apache.hadoop.io.WritableComparator;
 
-        public class DecadeCountComparator extends WritableComparator {
+public class DecadeCountComparator extends WritableComparator {
 
         protected DecadeCountComparator() {
             super(DecadeCount.class, true);
         }
-
-        @SuppressWarnings("rawtypes")
 
         @Override
         public int compare(WritableComparable w1, WritableComparable w2) {

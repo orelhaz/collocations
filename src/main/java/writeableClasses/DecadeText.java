@@ -1,3 +1,5 @@
+package writeableClasses;
+
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.WritableComparable;
 
@@ -8,7 +10,7 @@ import java.io.IOException;
 /**
  * Created by Orel on 18/07/2018.
  */
-class DecadeText implements WritableComparable<DecadeText> {
+public class DecadeText implements WritableComparable<DecadeText> {
 
     Text decade;
     Text text;
@@ -17,7 +19,7 @@ class DecadeText implements WritableComparable<DecadeText> {
         set(new Text(), new Text());
     }
 
-    DecadeText(String decade, String word) {
+    public DecadeText(String decade, String word) {
         set(new Text(decade), new Text(word));
     }
 
