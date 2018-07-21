@@ -106,7 +106,7 @@ public class ExtractLogRatio {
 
         Configuration conf = new Configuration();
 
-        Job job = new Job(conf, "extractCollocationsInDecade");
+        Job job = new Job(conf, "mapReduce.ExtractLogRatio");
         job.setJarByClass(ExtractLogRatio.class);
 
         job.setMapperClass(MapperClass.class);

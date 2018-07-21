@@ -78,7 +78,7 @@ public class ExtractCounts {
 
         Configuration conf = new Configuration();
 
-        Job job = new Job(conf, "mapReduce.SplitWords");
+        Job job = new Job(conf, "mapReduce.ExtractCounts");
         job.setJarByClass(ExtractCounts.class);
 
         job.setMapperClass(MapperClass.class);
