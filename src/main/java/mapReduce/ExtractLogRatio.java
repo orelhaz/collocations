@@ -6,7 +6,6 @@ import org.apache.commons.math3.distribution.BinomialDistribution;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.DoubleWritable;
-import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.*;
@@ -62,7 +61,8 @@ public class ExtractLogRatio {
                 }
 
                 double logLikelihoodRatio = ReducerClass.likelihoodRatio(firstWordCount, wordCount, ngramCount, decadeCount);
-                context.write(key, new DoubleWritable(logLikelihoodRatio));
+                //context.write(key, new DoubleWritable(logLikelihoodRatio));
+                context.write(new DecadeText(key.getDecade().toString(), String.join("\t", ngram, String.valueOf(firstWordCount), String.valueOf(wordCount), String.valueOf(ngramCount), String.valueOf(decadeCount))), new DoubleWritable(logLikelihoodRatio));
 
                 ngramInMem = null;
                 firstWordCount = 0;
@@ -111,7 +111,7 @@ public class ExtractLogRatio {
 
         job.setMapperClass(MapperClass.class);
         job.setPartitionerClass(PartitionerClass.class);
-        job.setCombinerClass(ReducerClass.class);
+        //job.setCombinerClass(ReducerClass.class);
         job.setReducerClass(ReducerClass.class);
         job.setMapOutputKeyClass(DecadeText.class);
         job.setMapOutputValueClass(Text.class);
