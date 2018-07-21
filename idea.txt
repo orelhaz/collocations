@@ -1,7 +1,7 @@
 ab 1992 5
 ac 1996 6
 
-//1 - split word and total
+//1 - splitWords and totals
 after mapper:
 1990 a 	<ab> 5
 1990 a 	<ac> 6
@@ -18,7 +18,7 @@ output: (decade w pair pair_count)
 1990 c 	total 6
 1990 	total 22
 
-//2 - getCounts
+//2 - extractCounts
 after mapper:
 1990 total 22
 a 1990 total 11
@@ -35,7 +35,7 @@ output: (decade pair w pair_count w_count total_count)
 1990 <ab> b 5 5 22
 1990 <ac> c 6 6 22
 
-//3
+//3 - ExtractLogRatio
 after mapper:
 1990 <ab> a 5 11 22
 1990 <ab> b 5 5 22
