@@ -142,6 +142,13 @@ public class runLocal {
                 jc.addJob(controlledJob2);
                 jc.addJob(controlledJob3);
  //               jc.addJob(controlledJob4);
+                Thread runJControl = new Thread(jc);
+                runJControl.start();
+                while (!jc.allFinished()) {
+                    Thread.sleep(5000);
+                }
+                System.exit(1);
+
                 jc.run();
             } catch (Exception ignored) {
 
