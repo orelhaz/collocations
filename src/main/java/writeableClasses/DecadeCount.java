@@ -1,6 +1,6 @@
 package writeableClasses;
 
-import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.WritableComparable;
 
@@ -14,13 +14,13 @@ import java.io.IOException;
 public class DecadeCount implements WritableComparable<DecadeCount> {
 
     Text decade;
-    IntWritable count;
+    DoubleWritable count;
 
     public DecadeCount() {
-        set(new Text(), new IntWritable());
+        set(new Text(), new DoubleWritable());
     }
 
-    public DecadeCount(String decade, IntWritable count) {
+    public DecadeCount(String decade, DoubleWritable count) {
         set(new Text(decade), count);
     }
 
@@ -28,11 +28,11 @@ public class DecadeCount implements WritableComparable<DecadeCount> {
         return decade;
     }
 
-    public IntWritable getCount() {
+    public DoubleWritable getCount() {
         return count;
     }
 
-    public void set(Text decade, IntWritable count) {
+    public void set(Text decade, DoubleWritable count) {
         this.decade = decade;
         this.count= count;
     }

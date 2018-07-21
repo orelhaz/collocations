@@ -13,11 +13,12 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+import writeableClasses.DecadeText;
 
 import java.io.IOException;
 
-public class ExtractCountsInDecade {
-    public static class MapperClass extends Mapper<LongWritable, Text, Text, IntWritable> {
+public class ExtractCounts {
+    public static class MapperClass extends Mapper<LongWritable, Text, DecadeText, IntWritable> {
 
         @Override
         public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
@@ -28,20 +29,20 @@ public class ExtractCountsInDecade {
             String ngram = fields[2];
             int count = Integer.parseInt(fields[3]);
 
-            context.write(new Text(String.join("\t", decade, word, ngram)), new IntWritable(count));
+            context.write(new DecadeText(decade,String.join("\t", word, ngram)), new IntWritable(count));
         }
     }
 
-    public static class ReducerClass extends Reducer<Text, IntWritable, Text, Text> {
+    public static class ReducerClass extends Reducer<DecadeText, IntWritable, Text, Text> {
         int wordSum = 0;
         int decadeSum = 0;
 
         @Override
-        public void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
-            String[] fields = key.toString().split("\t");
-            String decade = fields[0];
-            String word = fields[1];
-            String ngram = fields[2];
+        public void reduce(DecadeText key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
+            String[] fields = key.getText().toString().split("\t");
+            String decade = key.getDecade().toString();
+            String word = fields[0];
+            String ngram = fields[1];
 
             for (IntWritable value : values) {
 
@@ -57,14 +58,13 @@ public class ExtractCountsInDecade {
 
                 context.write(new Text(String.join("\t", decade, ngram, word)),
                         new Text(String.join("\t", value.toString(), String.valueOf(wordSum), String.valueOf(decadeSum))));
-
             }
         }
     }
 
-    public static class PartitionerClass extends Partitioner<Text, IntWritable> {
+    public static class PartitionerClass extends Partitioner<DecadeText, IntWritable> {
         @Override
-        public int getPartition(Text key, IntWritable value, int numPartitions) {
+        public int getPartition(DecadeText key, IntWritable value, int numPartitions) {
             return key.hashCode() % numPartitions;
         }
     }
@@ -78,14 +78,14 @@ public class ExtractCountsInDecade {
 
         Configuration conf = new Configuration();
 
-        Job job = new Job(conf, "mapReduce.SplitWordsInDecade");
-        job.setJarByClass(ExtractCountsInDecade.class);
+        Job job = new Job(conf, "mapReduce.SplitWords");
+        job.setJarByClass(ExtractCounts.class);
 
         job.setMapperClass(MapperClass.class);
         job.setPartitionerClass(PartitionerClass.class);
         // job.setCombinerClass(ReducerClass.class);
         job.setReducerClass(ReducerClass.class);
-        job.setMapOutputKeyClass(Text.class);
+        job.setMapOutputKeyClass(DecadeText.class);
         job.setMapOutputValueClass(IntWritable.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);

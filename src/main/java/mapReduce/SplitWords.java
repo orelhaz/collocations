@@ -16,7 +16,7 @@ import writeableClasses.DecadeText;
 
 import java.io.IOException;
 
-public class SplitWordsInDecade {
+public class SplitWords {
     public static class MapperClass extends Mapper<LongWritable, Text, DecadeText, Text> {
 
         @Override
@@ -106,8 +106,8 @@ public class SplitWordsInDecade {
 
         Configuration conf = new Configuration();
 
-        Job job = new Job(conf, "mapReduce.SplitWordsInDecade");
-        job.setJarByClass(SplitWordsInDecade.class);
+        Job job = new Job(conf, "mapReduce.SplitWords");
+        job.setJarByClass(SplitWords.class);
 
         job.setMapperClass(MapperClass.class);
         job.setPartitionerClass(PartitionerClass.class);

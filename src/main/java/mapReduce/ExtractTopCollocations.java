@@ -2,6 +2,7 @@ package mapReduce;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -25,19 +26,17 @@ public class ExtractTopCollocations {
         @Override
         public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
             String[] fields = value.toString().split("\t");
-
-            if (fields.length < 3)
-                return;
+            if (fields.length < 3) return;
 
             String decade = fields[0];
             String ngram = fields[1];
-            String count = fields[2];
+            Double lRatio = Double.valueOf(fields[2]);
 
-            context.write(new DecadeCount(decade, new IntWritable(Integer.valueOf(count))), new Text(ngram));
+            context.write(new DecadeCount(decade, new DoubleWritable(lRatio)), new Text(ngram));
         }
     }
 
-    public static class ReducerClass extends Reducer<DecadeCount, Text, DecadeText, IntWritable> {
+    public static class ReducerClass extends Reducer<DecadeCount, Text, DecadeText, DoubleWritable> {
         int countInMem;
         String decadeInMem = null;
 
@@ -47,7 +46,7 @@ public class ExtractTopCollocations {
             int top = Integer.parseInt(context.getConfiguration().get("top", "100"));
 
             Text decade = key.getDecade();
-            IntWritable count = key.getCount();
+            DoubleWritable lRatio = key.getCount();
 
             if (decadeInMem == null || !decade.toString().equals(decadeInMem)) {
                 countInMem = 0;
@@ -59,7 +58,7 @@ public class ExtractTopCollocations {
                     return;
 
                 countInMem++;
-                context.write(new DecadeText(decade.toString(),ngram.toString()), count);
+                context.write(new DecadeText(decade.toString(),ngram.toString()), lRatio);
 
             }
         }
@@ -96,7 +95,7 @@ public class ExtractTopCollocations {
         job.setMapOutputValueClass(Text.class);
 
         job.setOutputKeyClass(DecadeText.class);
-        job.setOutputValueClass(IntWritable.class);
+        job.setOutputValueClass(DoubleWritable.class);
 
         job.setInputFormatClass(TextInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);

@@ -37,10 +37,10 @@ output: (decade pair w pair_count w_count total_count)
 
 //3
 after mapper:
-<ab> a 1990 5 11 22
-<ab> b 1990 5 5 22
-<ac> c 1990 6 6 22
-<ac> a 1990 6 11 22
+1990 <ab> a 5 11 22
+1990 <ab> b 5 5 22
+1990 <ac> c 6 6 22
+1990 <ac> a 6 11 22
 
 output: (decade pair lratio(w1, w2, total, w12))
 1990 <ab> lratio 
