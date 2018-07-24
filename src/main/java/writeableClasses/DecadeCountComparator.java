@@ -16,6 +16,7 @@ public class DecadeCountComparator extends WritableComparator {
             DecadeCount k1 = (DecadeCount) w1;
             DecadeCount k2 = (DecadeCount)w2;
 
-            return -1 * k1.compareTo(k2);
+
+            return k1.compareTo(k2);
         }
     }

@@ -10,7 +10,7 @@ after mapper:
 
 output: (decade w pair pair_count)
 1990 a 	<ab> 5
-1990 a 	<ac> 6
+1990 a 	<ac>  
 1990 a 	total 11
 1990 b 	<ab> 5
 1990 b 	total 5

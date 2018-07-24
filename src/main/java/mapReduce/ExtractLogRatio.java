@@ -2,7 +2,6 @@ package mapReduce;
 
 import java.io.IOException;
 
-import org.apache.commons.math3.distribution.BinomialDistribution;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.DoubleWritable;
@@ -42,6 +41,7 @@ public class ExtractLogRatio {
 
         @Override
         public void reduce(DecadeText key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
+            String decade = key.getDecade().toString();
             String[] fields = key.getText().toString().split("\t");
             if (fields.length < 2) {
                 return;
@@ -61,8 +61,8 @@ public class ExtractLogRatio {
                 }
 
                 double logLikelihoodRatio = ReducerClass.likelihoodRatio(firstWordCount, wordCount, ngramCount, decadeCount);
-                //context.write(key, new DoubleWritable(logLikelihoodRatio));
-                context.write(new DecadeText(key.getDecade().toString(), String.join("\t", ngram, String.valueOf(firstWordCount), String.valueOf(wordCount), String.valueOf(ngramCount), String.valueOf(decadeCount))), new DoubleWritable(logLikelihoodRatio));
+                context.write(new DecadeText(decade, ngram), new DoubleWritable(logLikelihoodRatio));
+                //context.write(new DecadeText(key.getDecade().toString(), String.join("\t", ngram, String.valueOf(firstWordCount), String.valueOf(wordCount), String.valueOf(ngramCount), String.valueOf(decadeCount))), new DoubleWritable(logLikelihoodRatio));
 
                 ngramInMem = null;
                 firstWordCount = 0;
@@ -76,18 +76,32 @@ public class ExtractLogRatio {
          * @param N   - total number of words in decade
          * @return the log likelihood ratio
          */
-        private static double likelihoodRatio(int c1, int c2, int c12, int N) {
-            double p = c2 / N;
-            double p1 = c12 / N;
-            double p2 = (c2 - c12) / (N - c1);
 
-            double b1 = new BinomialDistribution(c12, p).cumulativeProbability(c1);
-            double b2 = new BinomialDistribution(c2 - c12, p).cumulativeProbability(N - c1);
-            double b3 = new BinomialDistribution(c12, p1).cumulativeProbability(c1);
-            double b4 = new BinomialDistribution(c2 - c12, p2).cumulativeProbability(N - c1);
+        private static double likelihoodRatio(double c1, double c2, double c12, int N)
+        {
+            double p = c2/N;
+            double p1 = c12/N;
+            double p2 = (c2-c12)/(N-c1);
 
-            return Math.log(b1) + Math.log(b2) - Math.log(b3) - Math.log(b4);
+            double L1 = L (c12, c1, p);
+            double L2 = L (c2-c12, N-c1, p);
+            double L3 = L (c12, c1, p1);
+            double L4 = L (c2 - c12, N - c1, p2);
+
+            double logM1 = L1 == 0 ? 0 : Math.log(L1);
+            double logM2 = L2 == 0 ? 0 : Math.log(L2);
+            double logM3 = L3 == 0 ? 0 : Math.log(L3);
+            double logM4 = L4 == 0 ? 0 : Math.log(L4);
+
+            return logM1 + logM2 - logM3 - logM4;
+
         }
+
+        private static double L (double k, double n, double x)
+        {
+            return Math.pow(x, k) * Math.pow(1-x, n-k);
+        }
+
     }
 
     public static class PartitionerClass extends Partitioner<DecadeText, Text> {

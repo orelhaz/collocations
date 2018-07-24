@@ -68,6 +68,6 @@ public class DecadeCount implements WritableComparable<DecadeCount> {
     public int compareTo(DecadeCount other) {
         int result = decade.compareTo(other.decade);
         if (result != 0) return result;
-        return count.compareTo(other.count);
+        return -1 * count.compareTo(other.count);
     }
 }
