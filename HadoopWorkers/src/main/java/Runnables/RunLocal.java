@@ -1,8 +1,4 @@
-package mapReduce;
-
-/**
- * Created by Orel on 21/07/2018.
- */
+package Runnables;
 
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.DoubleWritable;
@@ -20,11 +16,10 @@ import java.util.LinkedList;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
-import writeableClasses.DecadeCount;
-import writeableClasses.DecadeCountComparator;
-import writeableClasses.DecadeText;
+import models.*;
+import workers.*;
 
-public class runLocal {
+public class RunLocal {
     public static void main(String[] args) {
 
         // Example of applying a pipeline of two mapper/reducer jobs, by using JobControl object, over a depending constraint.
@@ -46,7 +41,7 @@ public class runLocal {
             Configuration conf = new Configuration();
 
             Job job1 = new Job(conf, "mapReduce.SplitWords");
-            job1.setJarByClass(SplitWords.class);
+            job1.setJarByClass(workers.SplitWords.class);
 
             job1.setMapperClass(SplitWords.MapperClass.class);
             job1.setPartitionerClass(SplitWords.PartitionerClass.class);
@@ -148,7 +143,7 @@ public class runLocal {
             while (!jc.allFinished()) {
                 Thread.sleep(5000);
             }
-            System.exit(1);
+            System.exit(0);
 
             jc.run();
         } catch (Exception ignored) {

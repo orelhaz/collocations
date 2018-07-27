@@ -1,4 +1,4 @@
-package mapReduce;
+package workers;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -12,13 +12,26 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
-import writeableClasses.DecadeText;
+import models.DecadeText;
+import stopWords.EnglishStopWords;
+import stopWords.HebrewStopWords;
 
 import java.io.IOException;
+import java.util.HashSet;
 
 public class SplitWords {
     public static class MapperClass extends Mapper<LongWritable, Text, DecadeText, Text> {
 
+    	public HashSet<String> _stopWords = new HashSet<String>();
+    	
+    	
+    	@Override
+    	public void setup(Context context) {
+    		
+    		String lang = context.getConfiguration().get("lang", "en");
+    		_stopWords = lang.equals("en") ? EnglishStopWords.GetStopWords() : HebrewStopWords.GetStopWords();
+    	}
+    	
         @Override
         public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
             String[] fields = value.toString().split("\t");
@@ -33,8 +46,12 @@ public class SplitWords {
                 return;
             }
             String decade = year.substring(0, 3) + "0";
-            context.write(new DecadeText(decade, ngram_words[0]), new Text(ngram + "\t" + count));
-            context.write(new DecadeText(decade, ngram_words[1]), new Text(ngram + "\t" + count));
+            
+            if (!_stopWords.contains(ngram_words[0]))
+            	context.write(new DecadeText(decade, ngram_words[0]), new Text(ngram + "\t" + count));
+            
+            if (!_stopWords.contains(ngram_words[1]))
+            	context.write(new DecadeText(decade, ngram_words[1]), new Text(ngram + "\t" + count));
         }
     }
 
@@ -47,8 +64,8 @@ public class SplitWords {
 
         @Override
         public void reduce(DecadeText key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
-            Text word = key.getText();
-            Text decade = key.getDecade();
+            Text word = key.getvalue();
+            Text decade = key.getTag();
 
             if (wordInMem == null) wordInMem = word.toString();
             if (decadeInMem == null) decadeInMem = decade.toString();
@@ -106,7 +123,7 @@ public class SplitWords {
 
         Configuration conf = new Configuration();
 
-        Job job = new Job(conf, "mapReduce.SplitWords");
+        Job job = Job.getInstance(conf, "mapReduce.SplitWords");
         job.setJarByClass(SplitWords.class);
 
         job.setMapperClass(MapperClass.class);

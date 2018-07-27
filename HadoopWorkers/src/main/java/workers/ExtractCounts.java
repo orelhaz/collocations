@@ -1,4 +1,4 @@
-package mapReduce;
+package workers;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -13,7 +13,7 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
-import writeableClasses.DecadeText;
+import models.DecadeText;
 
 import java.io.IOException;
 
@@ -39,8 +39,8 @@ public class ExtractCounts {
 
         @Override
         public void reduce(DecadeText key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
-            String[] fields = key.getText().toString().split("\t");
-            String decade = key.getDecade().toString();
+            String[] fields = key.getvalue().toString().split("\t");
+            String decade = key.getTag().toString();
             String word = fields[0];
             String ngram = fields[1];
 
@@ -78,7 +78,7 @@ public class ExtractCounts {
 
         Configuration conf = new Configuration();
 
-        Job job = new Job(conf, "mapReduce.ExtractCounts");
+        Job job = Job.getInstance(conf, "mapReduce.ExtractCounts");
         job.setJarByClass(ExtractCounts.class);
 
         job.setMapperClass(MapperClass.class);

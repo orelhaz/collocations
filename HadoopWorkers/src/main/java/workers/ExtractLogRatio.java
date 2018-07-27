@@ -1,4 +1,4 @@
-package mapReduce;
+package workers;
 
 import java.io.IOException;
 
@@ -12,7 +12,7 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
-import writeableClasses.DecadeText;
+import models.DecadeText;
 
 public class ExtractLogRatio {
     public static class MapperClass extends Mapper<LongWritable, Text, DecadeText, Text> {
@@ -41,8 +41,8 @@ public class ExtractLogRatio {
 
         @Override
         public void reduce(DecadeText key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
-            String decade = key.getDecade().toString();
-            String[] fields = key.getText().toString().split("\t");
+            String decade = key.getTag().toString();
+            String[] fields = key.getvalue().toString().split("\t");
             if (fields.length < 2) {
                 return;
             }
@@ -77,16 +77,15 @@ public class ExtractLogRatio {
          * @return the log likelihood ratio
          */
 
-        private static double likelihoodRatio(double c1, double c2, double c12, int N)
-        {
-            double p = c2/N;
-            double p1 = c12/N;
-            double p2 = (c2-c12)/(N-c1);
+        private static double likelihoodRatio(double c1, double c2, double c12, int N) {
+            double p = c2 / N;
+            double p1 = c12 / N;
+            double p2 = (c2 - c12) / (N - c1);
 
-            double L1 = L (c12, c1, p);
-            double L2 = L (c2-c12, N-c1, p);
-            double L3 = L (c12, c1, p1);
-            double L4 = L (c2 - c12, N - c1, p2);
+            double L1 = L(c12, c1, p);
+            double L2 = L(c2 - c12, N - c1, p);
+            double L3 = L(c12, c1, p1);
+            double L4 = L(c2 - c12, N - c1, p2);
 
             double logM1 = L1 == 0 ? 0 : Math.log(L1);
             double logM2 = L2 == 0 ? 0 : Math.log(L2);
@@ -97,13 +96,10 @@ public class ExtractLogRatio {
 
         }
 
-        private static double L (double k, double n, double x)
-        {
-            return Math.pow(x, k) * Math.pow(1-x, n-k);
+        private static double L(double k, double n, double x) {
+            return Math.pow(x, k) * Math.pow(1 - x, n - k);
         }
-
     }
-
     public static class PartitionerClass extends Partitioner<DecadeText, Text> {
         @Override
         public int getPartition(DecadeText key, Text value, int numPartitions) {
@@ -120,7 +116,7 @@ public class ExtractLogRatio {
 
         Configuration conf = new Configuration();
 
-        Job job = new Job(conf, "mapReduce.ExtractLogRatio");
+        Job job = Job.getInstance(conf, "mapReduce.ExtractLogRatio");
         job.setJarByClass(ExtractLogRatio.class);
 
         job.setMapperClass(MapperClass.class);
