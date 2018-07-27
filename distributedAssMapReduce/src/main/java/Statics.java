@@ -12,7 +12,7 @@ public class Statics {
 	public final static String DEFAULT_SECURITY_GROUP = "sg-ff8865b6";
 
 	//public final static String KEY_PAIR = "aws-key-pair";
-	public final static String KEY_PAIR = "dsdp";
+	public final static String KEY_PAIR = "dsps";
 
 	public static String WorkerJarName = "hadoopWorker.jar";
 	public static String HebBigrmas = "s3n://datasets.elasticmapreduce/ngrams/books/20090715/heb-all/2gram/data";

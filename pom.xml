@@ -24,12 +24,5 @@
         <module>HadoopWorkers</module>
         <module>distributedAssMapReduce</module>
     </modules>
-    <dependencies>
-        <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk-emr</artifactId>
-            <version>1.11.313</version>
-        </dependency>
-    </dependencies>
 
 </project>
