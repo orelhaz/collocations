@@ -66,16 +66,17 @@ public class ExtractTopCollocations {
 	    public static class PartitionerClass extends Partitioner<DecadeCount, Text> {
 	        @Override
 	        public int getPartition(DecadeCount key, Text value, int numPartitions) {
-	            return Math.abs(key.hashCode() % numPartitions);
+				int decadeRank = Integer.parseInt(key.getTag().toString().substring(0, 3)) - 50; // number from 2-150 ( decades 1520-2000)
+				int where = decadeRank - (150 - (numPartitions - 1));
+				if (where <= 0)
+					return 0; // all of the earlier decades enter into the first partition
+				return where; // the rest, numPartitions-1 decades will go each one to a specific partition
 	        }
 	    }
 
 	    public static void main(String[] args) throws Exception {
-	        System.out.println("starting...");
 	        String input = args[0];
 	        String output = args[1];
-	        System.out.println(input);
-	        System.out.println(output);
 
 	        Configuration conf = new Configuration();
 	        conf.set("top", String.valueOf(100));
@@ -103,7 +104,6 @@ public class ExtractTopCollocations {
 
 	        FileInputFormat.addInputPath(job, new Path(input));
 	        FileOutputFormat.setOutputPath(job, op);
-	        System.out.println("submitting job...");
 	        System.exit(job.waitForCompletion(true) ? 0 : 1);
     }	
 }

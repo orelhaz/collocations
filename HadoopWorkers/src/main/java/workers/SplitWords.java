@@ -60,7 +60,6 @@ public class SplitWords {
         int wordSum = 0;
         int decadeSum = 0;
 
-
         @Override
         public void reduce(DecadeText key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
             Text word = key.getvalue();
@@ -118,11 +117,8 @@ public class SplitWords {
     }
 
     public static void main(String[] args) throws Exception {
-        System.out.println("starting...");
         String input = args[0];
         String output = args[1];
-        System.out.println(input);
-        System.out.println(output);
 
         Configuration conf = new Configuration();
 
@@ -144,7 +140,6 @@ public class SplitWords {
 
         FileInputFormat.addInputPath(job, new Path(input));
         FileOutputFormat.setOutputPath(job, op);
-        System.out.println("submitting job...");
         System.exit(job.waitForCompletion(true) ? 0 : 1);
     }
 }

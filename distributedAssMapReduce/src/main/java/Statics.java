@@ -7,7 +7,7 @@ import java.sql.Timestamp;
 
 public class Statics {
 	public final static String INSTANCE_TYPE = InstanceType.M3Xlarge.toString();
-	public final static int MACHINES_AMOUNT = 20;
+	public final static int MACHINES_AMOUNT = 10;
 	public final static String VERSION = "001";
 	public final static String DEFAULT_REGION = "us-east-1";
 	public final static String DEFAULT_PLACEMENT_REGION = "us-east-1a";
@@ -28,12 +28,11 @@ public class Statics {
 	private static Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
 
-	public static String SplitWordsOutput = BUCKET_URL + "split-words-output" + timestamp.getTime();
-	public static String ExtractCountOutput = BUCKET_URL + "extract-counts-output" + timestamp.getTime();
-	public static String ExtractRatioOutput = BUCKET_URL + "extract-ratio-output" + timestamp.getTime();
-	public static String TopCollocationsOutput = BUCKET_URL + "top-collocations-output" + timestamp.getTime();
-	
-	
+	public static String SplitWordsOutput = BUCKET_URL + "split-words-output1532794632004";
+	public static String ExtractCountOutput = BUCKET_URL + "extract-counts-output";
+	public static String ExtractRatioOutput = BUCKET_URL + "extract-ratio-output";
+	public static String TopCollocationsOutput = BUCKET_URL + "top-collocations-output";
+
 	public static String TopCollocation = "100";
 	
 	public enum RunConfiguration {All, WordCount, Collocation}

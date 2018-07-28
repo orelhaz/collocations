@@ -136,7 +136,7 @@ public class MyMain {
 		    .withHadoopJarStep(hadoopJarFirstStep)
 		    .withActionOnFailure("TERMINATE_JOB_FLOW");
 
-        steps.add(step1Config);
+        //steps.add(step1Config);
 
         HadoopJarStepConfig hadoopJarSecondStep = new HadoopJarStepConfig()
 				.withJar(collocationJarName)
@@ -148,7 +148,7 @@ public class MyMain {
 				.withHadoopJarStep(hadoopJarSecondStep)
 				.withActionOnFailure("TERMINATE_JOB_FLOW");
 
-		//steps.add(step2Config);
+		steps.add(step2Config);
 
 		HadoopJarStepConfig hadoopJarThirdStep = new HadoopJarStepConfig()
 				.withJar(collocationJarName)
@@ -160,7 +160,7 @@ public class MyMain {
 				.withHadoopJarStep(hadoopJarThirdStep)
 				.withActionOnFailure("TERMINATE_JOB_FLOW");
 
-		//steps.add(step3Config);
+		steps.add(step3Config);
 
 		HadoopJarStepConfig hadoopJarFourthStep = new HadoopJarStepConfig()
 				.withJar(collocationJarName)
@@ -172,7 +172,7 @@ public class MyMain {
 				.withHadoopJarStep(hadoopJarFourthStep)
 				.withActionOnFailure("TERMINATE_JOB_FLOW");
 
-		//steps.add(step4Config);
+		steps.add(step4Config);
 
 		return steps;
 	}
