@@ -9,7 +9,7 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Partitioner;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import models.DecadeText;
@@ -22,16 +22,15 @@ import java.util.HashSet;
 public class SplitWords {
     public static class MapperClass extends Mapper<LongWritable, Text, DecadeText, Text> {
 
-    	public HashSet<String> _stopWords = new HashSet<String>();
-    	
-    	
-    	@Override
-    	public void setup(Context context) {
-    		
-    		String lang = context.getConfiguration().get("lang", "en");
-    		_stopWords = lang.equals("en") ? EnglishStopWords.GetStopWords() : HebrewStopWords.GetStopWords();
-    	}
-    	
+        public HashSet<String> _stopWords = new HashSet<String>();
+
+        @Override
+        public void setup(Context context) {
+
+            String lang = context.getConfiguration().get("lang", "en");
+            _stopWords = lang.equals("en") ? EnglishStopWords.GetStopWords() : HebrewStopWords.GetStopWords();
+        }
+
         @Override
         public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
             String[] fields = value.toString().split("\t");
@@ -45,28 +44,21 @@ public class SplitWords {
             if (ngram_words.length != 2) {
                 return;
             }
-            String decade;
-            if (year.length() == 4)
-                    decade = year.substring(0, 3) + "0";
-            else
-            {
-                decade = year + "wtf";
-                System.out.println(year);
-            }
-            
+            String decade = year.substring(0, 3) + "0";
+
             if (!_stopWords.contains(ngram_words[0]))
-            	context.write(new DecadeText(decade, ngram_words[0]), new Text(ngram + "\t" + count));
-            
+                context.write(new DecadeText(decade, ngram_words[0]), new Text(ngram + "\t" + count));
+
             if (!_stopWords.contains(ngram_words[1]))
-            	context.write(new DecadeText(decade, ngram_words[1]), new Text(ngram + "\t" + count));
+                context.write(new DecadeText(decade, ngram_words[1]), new Text(ngram + "\t" + count));
         }
     }
 
     public static class ReducerClass extends Reducer<DecadeText, Text, Text, Text> {
         String wordInMem = null;
         String decadeInMem = null;
-        int wordSum=0;
-        int decadeSum=0;
+        int wordSum = 0;
+        int decadeSum = 0;
 
 
         @Override
@@ -99,11 +91,11 @@ public class SplitWords {
         }
 
         private void writeTotalWord(Context context) throws IOException, InterruptedException {
-            context.write(new Text(String.join("\t",decadeInMem, wordInMem, " ")), new Text(String.valueOf(wordSum)));
+            context.write(new Text(String.join("\t", decadeInMem, wordInMem, " ")), new Text(String.valueOf(wordSum)));
         }
 
         private void writeTotalDecade(Context context) throws IOException, InterruptedException {
-            context.write(new Text(String.join("\t",decadeInMem, " ", " ")), new Text(String.valueOf(decadeSum)));
+            context.write(new Text(String.join("\t", decadeInMem, " ", " ")), new Text(String.valueOf(decadeSum)));
         }
 
         @Override
@@ -117,7 +109,12 @@ public class SplitWords {
     public static class PartitionerClass extends Partitioner<DecadeText, Text> {
         @Override
         public int getPartition(DecadeText key, Text value, int numPartitions) {
-            return Math.abs(key.hashCode() % numPartitions);
+            int decadeRank = Integer.parseInt(key.getTag().toString().substring(0,3)) - 50; // number from 2-150 ( decades 1520-2000)
+            int where =  decadeRank - (150 - (numPartitions-1));
+            if (where <= 0)
+                return 0; // all of the earlier decades enter into the first partition
+            else
+                return where; // the rest, numPartitions-1 decades will go each one to a specific partition
         }
     }
 
@@ -135,13 +132,13 @@ public class SplitWords {
 
         job.setMapperClass(MapperClass.class);
         job.setPartitionerClass(PartitionerClass.class);
-       // job.setCombinerClass(ReducerClass.class);
+        // job.setCombinerClass(ReducerClass.class);
         job.setReducerClass(ReducerClass.class);
         job.setMapOutputKeyClass(DecadeText.class);
         job.setMapOutputValueClass(Text.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
-        job.setInputFormatClass(TextInputFormat.class);
+        job.setInputFormatClass(SequenceFileInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
         Path op = new Path(output);
         op.getFileSystem(conf).delete(op, true);

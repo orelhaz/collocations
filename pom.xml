@@ -21,8 +21,8 @@
         </plugins>
     </build>
     <modules>
-        <module>HadoopWorkers</module>
         <module>distributedAssMapReduce</module>
-    </modules>
+        <module>HadoopWorkers</module>
+      </modules>
 
 </project>

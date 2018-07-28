@@ -25,11 +25,6 @@
     <dependencies>
     <dependency>
         <groupId>com.amazonaws</groupId>
-        <artifactId>aws-java-sdk-emr</artifactId>
-        <version>1.11.313</version>
-    </dependency>
-    <dependency>
-        <groupId>com.amazonaws</groupId>
         <artifactId>aws-java-sdk-core</artifactId>
         <version>1.11.313</version>
     </dependency>
@@ -43,6 +38,11 @@
         <artifactId>aws-java-sdk-ec2</artifactId>
         <version>1.11.313</version>
     </dependency>
-</dependencies>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-emr</artifactId>
+            <version>1.11.313</version>
+        </dependency>
+    </dependencies>
 
 </project>

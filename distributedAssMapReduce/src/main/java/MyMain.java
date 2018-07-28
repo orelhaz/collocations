@@ -3,7 +3,6 @@ import java.util.Collection;
 import java.util.List;
 
 
-import com.amazonaws.services.ec2.model.InstanceType;
 import com.amazonaws.services.elasticmapreduce.AmazonElasticMapReduce;
 import com.amazonaws.services.elasticmapreduce.AmazonElasticMapReduceClientBuilder;
 import com.amazonaws.services.elasticmapreduce.model.*;
@@ -17,7 +16,7 @@ public class MyMain {
 	}
 
 	public static void main(String[] args) {
-		final int machinesAmount = 5;
+
 
 		Statics.RunConfiguration runConf = Statics.RunConfiguration.Collocation; //default value
 		Statics.InputLang lang = Statics.InputLang.English; //default value
@@ -59,7 +58,7 @@ public class MyMain {
 		debug("Region: " + Statics.DEFAULT_REGION);
 		debug("S3 bucket: " + Statics.BUCKET_URL);
 		debug("Key-Pair: " + Statics.KEY_PAIR);
-		debug("Machines amount: " + machinesAmount);
+		debug("Machines amount: " + Statics.MACHINES_AMOUNT);
 		debug("Configurations: " + runConf);
 		debug("Input url: " + input);
 		debug("------------------------------");
@@ -81,9 +80,9 @@ public class MyMain {
 
 		// Setting up the configuration of the entire run
 		JobFlowInstancesConfig instances = new JobFlowInstancesConfig()
-			    .withInstanceCount(machinesAmount)
-			    .withMasterInstanceType(InstanceType.M1Large.toString())
-			    .withSlaveInstanceType(InstanceType.M1Large.toString())
+			    .withInstanceCount(Statics.MACHINES_AMOUNT)
+			    .withMasterInstanceType(Statics.INSTANCE_TYPE)
+			    .withSlaveInstanceType(Statics.INSTANCE_TYPE)
 			    .withEc2KeyName(Statics.KEY_PAIR).withHadoopVersion("2.6.0")
 			    .withAdditionalMasterSecurityGroups(Statics.DEFAULT_SECURITY_GROUP)
 			    .withKeepJobFlowAliveWhenNoSteps(false)

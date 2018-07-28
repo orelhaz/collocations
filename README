@@ -1,0 +1,32 @@
+Names:
+    Orel Hazan          203187984
+    Ori Gavriel Refael
+
+output:
+    The output is in the file output.txt
+
+reports:
+    Statistics are in the file Statistics.txt
+    Analysis are in the file Analysis.txt
+
+Explanation:
+    To run the ExtractCollocation program, use:
+
+    java -jar hadoopWorker.jar ExtractCollations heb/eng
+
+Implementation:
+    to get the top-100 collocations for each decade, we use 4 jobs:
+
+    1. Split Words
+    2. Extract counts
+    3. Extract log ratio
+    4. Extract top collocations
+
+Notes:
+    - after seeing the total counts of each decade, we splitted the decades between the reducers like this:
+
+        numPartitions-1 highest decades will go each one to a specific reducer.
+        the rest of the decades will go to the last partition that is not being used.
+
+      That is because in the last decades there is much more information, and for our calculations
+      each decade should go to the same reducer - so we cannot split decades between reducers.
