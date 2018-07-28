@@ -2,7 +2,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-
 import com.amazonaws.services.elasticmapreduce.AmazonElasticMapReduce;
 import com.amazonaws.services.elasticmapreduce.AmazonElasticMapReduceClientBuilder;
 import com.amazonaws.services.elasticmapreduce.model.*;
@@ -16,15 +15,13 @@ public class MyMain {
 	}
 
 	public static void main(String[] args) {
-
-
 		Statics.RunConfiguration runConf = Statics.RunConfiguration.Collocation; //default value
-		Statics.InputLang lang = Statics.InputLang.English; //default value
+		Statics.InputLang lang = Statics.InputLang.Hebrew; //default value
 
 		// Set running project
 		if (args.length > 0)
 		{
-			switch (args[0])
+				switch (args[0])
 			{
 				case "ExtractCollations":
 					runConf = Statics.RunConfiguration.Collocation;
@@ -44,6 +41,7 @@ public class MyMain {
 					lang = Statics.InputLang.English;
 					break;
 				case "heb":
+					System.out.println("cascdsa");
 					lang = Statics.InputLang.Hebrew;
 					break;
 
@@ -136,7 +134,7 @@ public class MyMain {
 		    .withHadoopJarStep(hadoopJarFirstStep)
 		    .withActionOnFailure("TERMINATE_JOB_FLOW");
 
-        //steps.add(step1Config);
+        steps.add(step1Config);
 
         HadoopJarStepConfig hadoopJarSecondStep = new HadoopJarStepConfig()
 				.withJar(collocationJarName)

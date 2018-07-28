@@ -28,7 +28,7 @@ public class Statics {
 	private static Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
 
-	public static String SplitWordsOutput = BUCKET_URL + "split-words-output1532794632004";
+	public static String SplitWordsOutput = BUCKET_URL + "split-words-output";
 	public static String ExtractCountOutput = BUCKET_URL + "extract-counts-output";
 	public static String ExtractRatioOutput = BUCKET_URL + "extract-ratio-output";
 	public static String TopCollocationsOutput = BUCKET_URL + "top-collocations-output";

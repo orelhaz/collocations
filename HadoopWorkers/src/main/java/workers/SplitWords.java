@@ -2,6 +2,7 @@ package workers;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
@@ -10,6 +11,7 @@ import org.apache.hadoop.mapreduce.Partitioner;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import models.DecadeText;
@@ -20,7 +22,7 @@ import java.io.IOException;
 import java.util.HashSet;
 
 public class SplitWords {
-    public static class MapperClass extends Mapper<LongWritable, Text, DecadeText, Text> {
+    public static class MapperClass extends Mapper<LongWritable, Text, DecadeText, IntWritable> {
 
         public HashSet<String> _stopWords = new HashSet<String>();
 
@@ -39,7 +41,7 @@ public class SplitWords {
             }
             String ngram = fields[0];
             String year = fields[1];
-            String count = fields[2];
+            int count = Integer.parseInt(fields[2]);
             String[] ngram_words = ngram.split(" ");
             if (ngram_words.length != 2) {
                 return;
@@ -47,23 +49,38 @@ public class SplitWords {
             String decade = year.substring(0, 3) + "0";
 
             if (!_stopWords.contains(ngram_words[0]))
-                context.write(new DecadeText(decade, ngram_words[0]), new Text(ngram + "\t" + count));
+                context.write(new DecadeText(decade, ngram_words[0] + "\t" + ngram), new IntWritable(count));
 
             if (!_stopWords.contains(ngram_words[1]))
-                context.write(new DecadeText(decade, ngram_words[1]), new Text(ngram + "\t" + count));
+                context.write(new DecadeText(decade, ngram_words[1] + "\t" + ngram), new IntWritable(count));
         }
     }
 
-    public static class ReducerClass extends Reducer<DecadeText, Text, Text, Text> {
+    public static class ReducerClass extends Reducer<DecadeText, IntWritable, Text, Text> {
         String wordInMem = null;
         String decadeInMem = null;
+
         int wordSum = 0;
         int decadeSum = 0;
 
+
+        /**
+         * receives: key (decade, word, ngram)
+         * yields: (decade, word, " "), sum
+         */
         @Override
-        public void reduce(DecadeText key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
-            Text word = key.getvalue();
+        public void reduce(DecadeText key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
+            String[] strValues = key.getvalue().toString().split("\t");
+
+            // restoring the ngarm
+            String ngramStr = strValues[1];
+            for (int i = 2; i < strValues.length; i++) {
+                ngramStr = ngramStr + "\t" + strValues[i];
+            }
+
+            Text word = new Text(strValues[0]);
             Text decade = key.getTag();
+            Text ngarm = new Text(ngramStr);
 
             if (wordInMem == null) wordInMem = word.toString();
             if (decadeInMem == null) decadeInMem = decade.toString();
@@ -80,13 +97,14 @@ public class SplitWords {
                 decadeSum = 0;
             }
 
-            for (Text value : values) {
-                context.write(new Text(key.toString()), value);
-                String[] fields = value.toString().split("\t");
-                int count = Integer.valueOf(fields[1]);
-                wordSum += count;
-                decadeSum += count;
+            int sum = 0;
+            for (IntWritable value : values) {
+                sum += value.get();
             }
+
+            context.write(new Text(new DecadeText(decade, word).toString()), new Text(ngarm + "\t" + sum));
+            wordSum += sum;
+            decadeSum += sum;
         }
 
         private void writeTotalWord(Context context) throws IOException, InterruptedException {
@@ -99,15 +117,17 @@ public class SplitWords {
 
         @Override
         protected void cleanup(Context context) throws IOException, InterruptedException {
-            writeTotalWord(context);
-            writeTotalDecade(context);
+            if (wordInMem != null) {
+                writeTotalWord(context);
+                writeTotalDecade(context);
+            }
             super.cleanup(context);
         }
     }
 
-    public static class PartitionerClass extends Partitioner<DecadeText, Text> {
+    public static class PartitionerClass extends Partitioner<DecadeText, IntWritable> {
         @Override
-        public int getPartition(DecadeText key, Text value, int numPartitions) {
+        public int getPartition(DecadeText key, IntWritable value, int numPartitions) {
             int decadeRank = Integer.parseInt(key.getTag().toString().substring(0, 3)) - 50; // number from 2-150 ( decades 1520-2000)
             int where = decadeRank - (150 - (numPartitions - 1));
             if (where <= 0)
@@ -127,12 +147,14 @@ public class SplitWords {
 
         job.setMapperClass(MapperClass.class);
         job.setPartitionerClass(PartitionerClass.class);
-        // job.setCombinerClass(ReducerClass.class);
+        //job.setCombinerClass(ReducerClass.class);
         job.setReducerClass(ReducerClass.class);
         job.setMapOutputKeyClass(DecadeText.class);
-        job.setMapOutputValueClass(Text.class);
+        job.setMapOutputValueClass(IntWritable.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
+
+        //job.setInputFormatClass(TextInputFormat.class);
         job.setInputFormatClass(SequenceFileInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
         Path op = new Path(output);
