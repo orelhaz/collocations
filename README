@@ -17,12 +17,14 @@ Explanation:
 Implementation:
     to get the top-100 collocations for each decade, we use 4 jobs:
 
-    1. Split Words - the first job splits each 2-gram into two words, and also counts the
+    1. Split Words - splits each 2-gram into two words, and also counts the
             number of appearances of each word, and the number of words in each decade.
-    2. Extract counts - extract counts get the counts from previous job, and put them in the
+    2. Extract counts - gets the counts from previous job, and put them in the
             same row as the 2-gram row.
-    3. Extract log ratio -
-    4. Extract top collocations -
+    3. Extract log ratio - merge the rows, gets the second word's count and extract log ratio for each
+            2-gram in decade.
+    4. Extract top collocations - sorts the 2-grams by the log ratio score,
+            and gets the top 100 2-grams in each decade.
 
 Notes:
     - after seeing the total counts of each decade, we splitted the decades between the reducers like this:
