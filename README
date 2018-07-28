@@ -17,8 +17,10 @@ Explanation:
 Implementation:
     to get the top-100 collocations for each decade, we use 4 jobs:
 
-    1. Split Words -
-    2. Extract counts -
+    1. Split Words - the first job splits each 2-gram into two words, and also counts the
+            number of appearances of each word, and the number of words in each decade.
+    2. Extract counts - extract counts get the counts from previous job, and put them in the
+            same row as the 2-gram row.
     3. Extract log ratio -
     4. Extract top collocations -
 
