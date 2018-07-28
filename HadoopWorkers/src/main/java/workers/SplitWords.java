@@ -47,8 +47,12 @@ public class SplitWords {
             }
             String decade;
             if (year.length() == 4)
-                decade = year.substring(0, 3) + "0";
-            else decade = year + "whhhhhhhhhat?";
+                    decade = year.substring(0, 3) + "0";
+            else
+            {
+                decade = year + "wtf";
+                System.out.println(year);
+            }
             
             if (!_stopWords.contains(ngram_words[0]))
             	context.write(new DecadeText(decade, ngram_words[0]), new Text(ngram + "\t" + count));
