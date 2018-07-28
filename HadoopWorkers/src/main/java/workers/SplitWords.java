@@ -109,12 +109,11 @@ public class SplitWords {
     public static class PartitionerClass extends Partitioner<DecadeText, Text> {
         @Override
         public int getPartition(DecadeText key, Text value, int numPartitions) {
-            int decadeRank = Integer.parseInt(key.getTag().toString().substring(0,3)) - 50; // number from 2-150 ( decades 1520-2000)
-            int where =  decadeRank - (150 - (numPartitions-1));
+            int decadeRank = Integer.parseInt(key.getTag().toString().substring(0, 3)) - 50; // number from 2-150 ( decades 1520-2000)
+            int where = decadeRank - (150 - (numPartitions - 1));
             if (where <= 0)
                 return 0; // all of the earlier decades enter into the first partition
-            else
-                return where; // the rest, numPartitions-1 decades will go each one to a specific partition
+            return where; // the rest, numPartitions-1 decades will go each one to a specific partition
         }
     }
 

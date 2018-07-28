@@ -6,8 +6,8 @@ import java.sql.Timestamp;
 
 
 public class Statics {
-	public final static String INSTANCE_TYPE = InstanceType.M1Large.toString();
-	public final static int MACHINES_AMOUNT = 5;
+	public final static String INSTANCE_TYPE = InstanceType.M3Xlarge.toString();
+	public final static int MACHINES_AMOUNT = 20;
 	public final static String VERSION = "001";
 	public final static String DEFAULT_REGION = "us-east-1";
 	public final static String DEFAULT_PLACEMENT_REGION = "us-east-1a";
