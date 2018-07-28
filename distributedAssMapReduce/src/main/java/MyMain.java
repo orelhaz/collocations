@@ -17,7 +17,7 @@ public class MyMain {
 	}
 
 	public static void main(String[] args) {
-		final int machinesAmount = 2;
+		final int machinesAmount = 5;
 
 		Statics.RunConfiguration runConf = Statics.RunConfiguration.Collocation; //default value
 		Statics.InputLang lang = Statics.InputLang.English; //default value
@@ -149,7 +149,7 @@ public class MyMain {
 				.withHadoopJarStep(hadoopJarSecondStep)
 				.withActionOnFailure("TERMINATE_JOB_FLOW");
 
-		steps.add(step2Config);
+		//steps.add(step2Config);
 
 		HadoopJarStepConfig hadoopJarThirdStep = new HadoopJarStepConfig()
 				.withJar(collocationJarName)
@@ -161,19 +161,19 @@ public class MyMain {
 				.withHadoopJarStep(hadoopJarThirdStep)
 				.withActionOnFailure("TERMINATE_JOB_FLOW");
 
-		steps.add(step3Config);
+		//steps.add(step3Config);
 
 		HadoopJarStepConfig hadoopJarFourthStep = new HadoopJarStepConfig()
 				.withJar(collocationJarName)
-				.withMainClass("ExtractTopCollocations")
+				.withMainClass("workers.ExtractTopCollocations")
 				.withArgs(Statics.ExtractRatioOutput, Statics.TopCollocationsOutput);
 
 		StepConfig step4Config = new StepConfig()
-				.withName("topCollocations")
+				.withName("ExtractTopCollocations")
 				.withHadoopJarStep(hadoopJarFourthStep)
 				.withActionOnFailure("TERMINATE_JOB_FLOW");
 
-		steps.add(step4Config);
+		//steps.add(step4Config);
 
 		return steps;
 	}

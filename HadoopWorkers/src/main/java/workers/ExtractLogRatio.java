@@ -103,7 +103,7 @@ public class ExtractLogRatio {
     public static class PartitionerClass extends Partitioner<DecadeText, Text> {
         @Override
         public int getPartition(DecadeText key, Text value, int numPartitions) {
-            return key.hashCode() % numPartitions;
+            return Math.abs(key.hashCode() % numPartitions);
         }
     }
 

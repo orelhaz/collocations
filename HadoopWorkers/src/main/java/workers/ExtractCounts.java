@@ -65,7 +65,7 @@ public class ExtractCounts {
     public static class PartitionerClass extends Partitioner<DecadeText, IntWritable> {
         @Override
         public int getPartition(DecadeText key, IntWritable value, int numPartitions) {
-            return key.hashCode() % numPartitions;
+            return Math.abs(key.hashCode() % numPartitions);
         }
     }
 

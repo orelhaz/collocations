@@ -16,9 +16,9 @@ public class Statics {
 
 	public static String WorkerJarName = "hadoopWorker.jar";
 	public static String HebBigrmas = "s3n://datasets.elasticmapreduce/ngrams/books/20090715/heb-all/2gram/data";
-	public static String EnBigrmas = "s3n://orelhaz.distributed.ass12/googlebooks-eng-all-2gram-20120701-xz";
+	//public static String EnBigrmas = "s3n://orelhaz.distributed.ass12/googlebooks-eng-all-2gram-20120701-xz";
 	//public static String EnBigrmas = "s3n://dsps-ori-refael/ass2/input/googlebooks-eng-all-2gram-20120701-xz";
-	//public static String EnBigrmas = "s3://datasets.elasticmapreduce/ngrams/books/20090715/eng-us-all/2gram/data";
+	public static String EnBigrmas = "s3://datasets.elasticmapreduce/ngrams/books/20090715/eng-us-all/2gram/data";
 	
 	public static String SplitWordsOutput = BUCKET_URL + "split-words-output";
 	public static String ExtractCountOutput = BUCKET_URL + "extract-counts-output";

@@ -45,7 +45,10 @@ public class SplitWords {
             if (ngram_words.length != 2) {
                 return;
             }
-            String decade = year.substring(0, 3) + "0";
+            String decade;
+            if (year.length() == 4)
+                decade = year.substring(0, 3) + "0";
+            else decade = year + "whhhhhhhhhat?";
             
             if (!_stopWords.contains(ngram_words[0]))
             	context.write(new DecadeText(decade, ngram_words[0]), new Text(ngram + "\t" + count));
@@ -110,7 +113,7 @@ public class SplitWords {
     public static class PartitionerClass extends Partitioner<DecadeText, Text> {
         @Override
         public int getPartition(DecadeText key, Text value, int numPartitions) {
-            return key.hashCode() % numPartitions;
+            return Math.abs(key.hashCode() % numPartitions);
         }
     }
 

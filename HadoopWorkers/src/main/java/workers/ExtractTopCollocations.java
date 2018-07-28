@@ -66,7 +66,7 @@ public class ExtractTopCollocations {
 	    public static class PartitionerClass extends Partitioner<DecadeCount, Text> {
 	        @Override
 	        public int getPartition(DecadeCount key, Text value, int numPartitions) {
-	            return key.hashCode() % numPartitions;
+	            return Math.abs(key.hashCode() % numPartitions);
 	        }
 	    }
 
