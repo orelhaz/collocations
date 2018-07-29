@@ -1,6 +1,8 @@
-NO LOCAL AGGREGATION
+HEBREW:
 
-FIRST STEP:
+NO LOCAL AGGREGATION: TOTAL TIME - 29 MINUTES
+
+FIRST STEP: 9 MINUTES
 	File System Counters
 		FILE: Number of bytes read=6106883266
 		FILE: Number of bytes written=8967554294
@@ -63,7 +65,7 @@ FIRST STEP:
 	File Output Format Counters
 		Bytes Written=3618822370
 
-SECOND STEP:
+SECOND STEP: 4 MINUTES
 	File System Counters
 		FILE: Number of bytes read=1069696949
 		FILE: Number of bytes written=2154057870
@@ -128,7 +130,7 @@ SECOND STEP:
 	File Output Format Counters
 		Bytes Written=5081416078
 
-THIRD STEP:
+THIRD STEP: 4 MINUTES
 	File System Counters
 		FILE: Number of bytes read=1069696949
 		FILE: Number of bytes written=2154057870
@@ -193,7 +195,7 @@ THIRD STEP:
 	File Output Format Counters
 		Bytes Written=5081416078
 
-FOURTH STEP:
+FOURTH STEP: 1 MINUTE
 	File System Counters
 		FILE: Number of bytes read=969974418
 		FILE: Number of bytes written=1952934357
@@ -258,9 +260,9 @@ FOURTH STEP:
 	File Output Format Counters
 		Bytes Written=120614
 
-LOCAL AGGREGATION:
+LOCAL AGGREGATION: TOTAL TIME - 26 MINUTES
 
-FIRST STEP:
+FIRST STEP: 7 MINUTES
 	File System Counters
 		FILE: Number of bytes read=2813564688
 		FILE: Number of bytes written=4042470168
@@ -323,3 +325,81 @@ FIRST STEP:
 		Bytes Read=2581936701
 	File Output Format Counters
 		Bytes Written=3618822370
+
+
+
+ENGLISH:
+
+LOCAL AGGREGATION: TOTAL TIME : 2 HOURS, 49 MINUTES
+
+FIRST STEP: 1 HOUR, 18 MINUTES
+File System Counters
+    		FILE: Number of bytes read=37091697899
+    		FILE: Number of bytes written=53764423879
+    		FILE: Number of read operations=0
+    		FILE: Number of large read operations=0
+    		FILE: Number of write operations=0
+    		HDFS: Number of bytes read=85207
+    		HDFS: Number of bytes written=0
+    		HDFS: Number of read operations=613
+    		HDFS: Number of large read operations=0
+    		HDFS: Number of write operations=0
+    		S3N: Number of bytes read=41256248075
+    		S3N: Number of bytes written=38271775424
+    		S3N: Number of read operations=0
+    		S3N: Number of large read operations=0
+    		S3N: Number of write operations=0
+    	Job Counters
+    		Killed map tasks=1
+    		Killed reduce tasks=3
+    		Launched map tasks=613
+    		Launched reduce tasks=38
+    		Data-local map tasks=613
+    		Total time spent by all maps in occupied slots (ms)=7038068445
+    		Total time spent by all reduces in occupied slots (ms)=5384489310
+    		Total time spent by all map tasks (ms)=156401521
+    		Total time spent by all reduce tasks (ms)=59827659
+    		Total vcore-milliseconds taken by all map tasks=156401521
+    		Total vcore-milliseconds taken by all reduce tasks=59827659
+    		Total megabyte-milliseconds taken by all map tasks=225218190240
+    		Total megabyte-milliseconds taken by all reduce tasks=172303657920
+    	Map-Reduce Framework
+    		Map input records=3923370881
+    		Map output records=6274111931
+    		Map output bytes=187474614238
+    		Map output materialized bytes=19492165402
+    		Input split bytes=85207
+    		Combine input records=7597051846
+    		Combine output records=2646293608
+    		Reduce input groups=1323352926
+    		Reduce shuffle bytes=19492165402
+    		Reduce input records=1323353693
+    		Reduce output records=1355758474
+    		Spilled Records=3969647301
+    		Shuffled Maps =21455
+    		Failed Shuffles=0
+    		Merged Map outputs=21455
+    		GC time elapsed (ms)=812848
+    		CPU time spent (ms)=106348840
+    		Physical memory (bytes) snapshot=568833224704
+    		Virtual memory (bytes) snapshot=2140467503104
+    		Total committed heap usage (bytes)=513835270144
+    	Shuffle Errors
+    		BAD_ID=0
+    		CONNECTION=0
+    		IO_ERROR=0
+    		WRONG_LENGTH=0
+    		WRONG_MAP=0
+    		WRONG_REDUCE=0
+    	File Input Format Counters
+    		Bytes Read=0
+    	File Output Format Counters
+    		Bytes Written=38271775424
+
+SECOND STEP: 28 MINUTES
+FIRST STEP: 41 MINUTES
+FIRST STEP: 13 MINUTES
+
+NO AGGREGATION:
+FIRST STEP:
+
