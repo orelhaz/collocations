@@ -400,6 +400,69 @@ SECOND STEP: 28 MINUTES
 FIRST STEP: 41 MINUTES
 FIRST STEP: 13 MINUTES
 
-NO AGGREGATION:
-FIRST STEP:
+NO AGGREGATION: total time 3 hours, 15 min
+FIRST STEP: 1 hour, 43 minutes
+
+	File System Counters
+		FILE: Number of bytes read=82187047512
+		FILE: Number of bytes written=121208870790
+		FILE: Number of read operations=0
+		FILE: Number of large read operations=0
+		FILE: Number of write operations=0
+		HDFS: Number of bytes read=85207
+		HDFS: Number of bytes written=0
+		HDFS: Number of read operations=613
+		HDFS: Number of large read operations=0
+		HDFS: Number of write operations=0
+		S3N: Number of bytes read=41256237407
+		S3N: Number of bytes written=38271775424
+		S3N: Number of read operations=0
+		S3N: Number of large read operations=0
+		S3N: Number of write operations=0
+	Job Counters
+		Killed map tasks=1
+		Killed reduce tasks=6
+		Launched map tasks=613
+		Launched reduce tasks=41
+		Data-local map tasks=613
+		Total time spent by all maps in occupied slots (ms)=6897335985
+		Total time spent by all reduces in occupied slots (ms)=7379407440
+		Total time spent by all map tasks (ms)=153274133
+		Total time spent by all reduce tasks (ms)=81993416
+		Total vcore-milliseconds taken by all map tasks=153274133
+		Total vcore-milliseconds taken by all reduce tasks=81993416
+		Total megabyte-milliseconds taken by all map tasks=220714751520
+		Total megabyte-milliseconds taken by all reduce tasks=236141038080
+	Map-Reduce Framework
+		Map input records=3923370881
+		Map output records=6274111931
+		Map output bytes=187474614238
+		Map output materialized bytes=41751602825
+		Input split bytes=85207
+		Combine input records=0
+		Combine output records=0
+		Reduce input groups=1323352926
+		Reduce shuffle bytes=41751602825
+		Reduce input records=6274111931
+		Reduce output records=1355758474
+		Spilled Records=18820314274
+		Shuffled Maps =21455
+		Failed Shuffles=0
+		Merged Map outputs=21455
+		GC time elapsed (ms)=836262
+		CPU time spent (ms)=119338710
+		Physical memory (bytes) snapshot=586463891456
+		Virtual memory (bytes) snapshot=2140604518400
+		Total committed heap usage (bytes)=529469014016
+	Shuffle Errors
+		BAD_ID=0
+		CONNECTION=0
+		IO_ERROR=0
+		WRONG_LENGTH=0
+		WRONG_MAP=0
+		WRONG_REDUCE=0
+	File Input Format Counters
+		Bytes Read=0
+	File Output Format Counters
+		Bytes Written=38271775424
 
