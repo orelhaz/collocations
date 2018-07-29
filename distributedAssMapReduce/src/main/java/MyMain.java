@@ -17,7 +17,7 @@ public class MyMain {
 	public static void main(String[] args) {
 		Statics.RunConfiguration runConf = Statics.RunConfiguration.Collocation; //default value
 		Statics.InputLang lang = Statics.InputLang.Hebrew; //default value
-
+/*
 		// Set running project
 		if (args.length > 0)
 		{
@@ -30,18 +30,17 @@ public class MyMain {
 				default:
 					break;
 			}
-		}
+		}*/
 
 		// Set input language
-		if (args.length > 1)
+		if (args.length > 0)
 		{
-			switch (args[1])
+			switch (args[0])
 			{
-				case "en":
+				case "eng":
 					lang = Statics.InputLang.English;
 					break;
 				case "heb":
-					System.out.println("cascdsa");
 					lang = Statics.InputLang.Hebrew;
 					break;
 
@@ -114,7 +113,7 @@ public class MyMain {
 	 */
 	private static Collection<StepConfig> GetSteps(Statics.RunConfiguration configuration, String input, Statics.InputLang lang)
 	{
-		String langStr = lang == Statics.InputLang.English ? "en" : "heb";
+		String langStr = lang == Statics.InputLang.English ? "eng" : "heb";
 		return GenerateAllJob(input, langStr);
 
 	}

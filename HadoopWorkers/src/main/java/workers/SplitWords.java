@@ -56,6 +56,22 @@ public class SplitWords {
         }
     }
 
+
+    public static class CombinerClass extends Reducer<DecadeText, IntWritable, DecadeText, IntWritable> {
+
+        @Override
+        public void reduce(DecadeText key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
+
+            int sum = 0;
+            for (IntWritable value : values)
+            {
+                sum += value.get();
+            }
+
+            context.write(key, new IntWritable(sum));
+        }
+    }
+
     public static class ReducerClass extends Reducer<DecadeText, IntWritable, Text, Text> {
         String wordInMem = null;
         String decadeInMem = null;
@@ -147,7 +163,7 @@ public class SplitWords {
 
         job.setMapperClass(MapperClass.class);
         job.setPartitionerClass(PartitionerClass.class);
-        //job.setCombinerClass(ReducerClass.class);
+        //job.setCombinerClass(CombinerClass.class);
         job.setReducerClass(ReducerClass.class);
         job.setMapOutputKeyClass(DecadeText.class);
         job.setMapOutputValueClass(IntWritable.class);
